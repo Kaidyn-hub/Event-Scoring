@@ -1,0 +1,17 @@
+Array
+(
+)
+Array
+(
+    [id] => undefined
+    [gold] => 5
+    [silver] => 0
+    [bronze] => 0
+)
+Array
+(
+    [id] => undefined
+    [gold] => 0
+    [silver] => 0
+    [bronze] => 100
+)

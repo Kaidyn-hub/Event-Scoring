@@ -1,0 +1,40 @@
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0a3d62, #1e3799); /* Deep blue gradient */
+    color: white;
+}
+
+.card {
+    width: 350px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    background: #0c2461; /* Darker blue background for the card */
+    color: white;
+}
+
+.card h3 {
+    color: black;
+}
+
+.form-control {
+    background: #1e3799;
+    color: white;
+    border: 1px solid #4a69bd;
+}
+
+.form-control::placeholder {
+    color: #a4b0be;
+}
+
+.btn-primary {
+    background: #3c6382;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #0a3d62;
+}
