@@ -1,9 +1,11 @@
 body {
     height: 100vh;
     display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #0a3d62, #1e3799); /* Deep blue gradient */
+    background: linear-gradient(135deg, #0a3d62, #1e3799);
     color: white;
 }
 
@@ -12,7 +14,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-    background: #0c2461; /* Darker blue background for the card */
+    background: #0c2461;
     color: white;
 }
 
@@ -37,4 +39,10 @@ body {
 
 .btn-primary:hover {
     background: #0a3d62;
+}
+
+footer{
+    color: white;
+    position: absolute;
+    bottom: 10px;
 }

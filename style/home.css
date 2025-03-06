@@ -1,11 +1,12 @@
 body {
-    height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    background: linear-gradient(135deg, #0a3d62, #1e3799); /* Blue gradient */
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a3d62, #1e3799);
     color: white;
+    margin: 0;
 }
 
 .top-buttons {
@@ -25,12 +26,15 @@ body {
 
 .form-container {
     width: 350px;
+    max-width: 90%;
     background: white;
     padding: 25px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    box-shadow: 0  4px 10px rgba(0, 0, 0, 0.6);
     text-align: center;
     color: black;
+    margin: 20px;
+    margin-top: 70px;
 }
 
 .form-container h4 {
@@ -73,4 +77,13 @@ body {
 
 .btn-secondary:hover {
     background: #1a252f;
+}
+
+footer {
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    background: transparent;
+    margin-top: auto;
+    width: 100%;
 }
