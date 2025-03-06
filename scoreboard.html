@@ -17,26 +17,13 @@
 <body>
     <div class="container text-center">
         <h2 id="eventTitle">Event Scoreboard</h2>
-        <table class="table table-bordered text-center">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Participant</th>
-                    <th>Gold</th>
-                    <th>Silver</th>
-                    <th>Bronze</th>
-                    <th>Total Score</th>
-                </tr>
-                <p>Gold - 5 | Silver - 3 | Bronze - 1</p>
-            </thead>
-            <tbody id="scoreboard"></tbody>
-        </table>
+        <p>Gold - 5 | Silver - 3 | Bronze - 1</p>
+        <div id="scoreboard-container"></div>
 
         <div class="button-container">
             <button class="btn btn-outline-success" onclick="updateAllScores()">Update</button>
             <button class="btn btn-outline-warning" onclick="resetScoreboard()">Reset</button>
-            <button class="btn btn-outline-danger" onclick="window.location.href='delete_confirmation.html'">Delete
-                All</button>
+            <button class="btn btn-outline-danger" onclick="window.location.href='delete_confirmation.html'">Delete All</button>
         </div>
     </div>
 
@@ -45,33 +32,46 @@
             fetch("fetch_scores.php")
                 .then(response => response.json())
                 .then(data => {
-                    let tbody = document.getElementById("scoreboard");
-                    tbody.innerHTML = "";
+                    let container = document.getElementById("scoreboard-container");
+                    container.innerHTML = "";
 
-                    data.sort((a, b) => {
-                        if (b.gold !== a.gold) {
-                            return b.gold - a.gold;
-                        }
-                        if (b.silver !== a.silver) {
-                            return b.silver - a.silver;
-                        }
-                        return b.bronze - a.bronze;
-                    });
+                    for (const event in data) {
+                        let eventTable = `
+                            <h3 class="event-title">${event}</h3>
+                            <table class="table table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Participant</th>
+                                        <th>Gold</th>
+                                        <th>Silver</th>
+                                        <th>Bronze</th>
+                                        <th>Total Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
 
-                    data.forEach((row, index) => {
-                        let total = (parseInt(row.gold) * 5) + (parseInt(row.silver) * 3) + (parseInt(row.bronze) * 1);
-                        let tr = `
-                                        <tr data-id="${row.id}">
-                                            <td>${total > 0 ? index + 1 : "-"}</td>
-                                            <td>${row.participants}</td>
-                                            <td><input type="number" class="gold" value="${row.gold}" min="0"></td>
-                                            <td><input type="number" class="silver" value="${row.silver}" min="0"></td>
-                                            <td><input type="number" class="bronze" value="${row.bronze}" min="0"></td>
-                                            <td class="total">${total}</td>
-                                        </tr>
-                                    `;
-                        tbody.innerHTML += tr;
-                    });
+                        data[event].forEach((row, index) => {
+                            let total = (parseInt(row.gold) * 5) + (parseInt(row.silver) * 3) + (parseInt(row.bronze) * 1);
+                            eventTable += `
+                                <tr data-id="${row.id}">
+                                    <td>${total > 0 ? index + 1 : "-"}</td>
+                                    <td>${row.participants}</td>
+                                    <td><input type="number" class="gold" value="${row.gold}" min="0"></td>
+                                    <td><input type="number" class="silver" value="${row.silver}" min="0"></td>
+                                    <td><input type="number" class="bronze" value="${row.bronze}" min="0"></td>
+                                    <td class="total">${total}</td>
+                                </tr>
+                            `;
+                        });
+
+                        eventTable += `
+                                </tbody>
+                            </table>
+                        `;
+                        container.innerHTML += eventTable;
+                    }
                 });
         }
 
@@ -83,13 +83,13 @@
                 let bronze = row.querySelector(".bronze").value;
                 let totalCell = row.querySelector(".total");
 
-                let newTotal = (parseInt(gold) * 3) + (parseInt(silver) * 2) + (parseInt(bronze) * 1);
+                let newTotal = (parseInt(gold) * 5) + (parseInt(silver) * 3) + (parseInt(bronze) * 1);
                 totalCell.textContent = newTotal;
 
                 fetch("update_score.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `id=${id}&gold=${gold}&silver=${silver}&bronze=${bronze}`
+                    body: `id=${id}&gold=${gold }&silver=${silver}&bronze=${bronze}`
                 })
                     .then(response => response.json())
                     .then(data => {
@@ -101,16 +101,6 @@
                     });
             });
         }
-
-        fetch("fetch_scores.php")
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    let eventTitle = `${data[0].event_name} - ${data[0].year}`;
-                    document.getElementById("eventTitle").textContent = eventTitle;
-                }
-            })
-            .catch(error => console.error("Error fetching event details:", error));
 
         function resetScoreboard() {
             fetch("reset_scoreboard.php", { method: "POST" })

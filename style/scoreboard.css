@@ -53,6 +53,15 @@ table {
     overflow: hidden;
 }
 
+.event-title {
+    background-color: #f8f9fa;
+    color: #000;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    border: 1px solid #dee2e6;
+}
+
 th {
     background-color: #3c6382;
     color: white;
