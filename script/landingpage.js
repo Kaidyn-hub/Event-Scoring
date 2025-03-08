@@ -24,7 +24,9 @@ document.getElementById("eventForm").addEventListener("submit", function(event) 
     }).then(response => response.json())
       .then(data => {
           if (data.status === "success") {
-              window.location.href = "admin_scoreboard.html";
+            alert("Data saved successfully!");
+            this.reset();
+            document.getElementById("participants-container").innerHTML = "";
           } else {
               alert("Error saving data: " + data.message);
           }
