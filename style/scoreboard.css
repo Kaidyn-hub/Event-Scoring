@@ -2,31 +2,10 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, #0a3d62, #1e3799);
+    background: linear-gradient(135deg, #000000, #1e3799);
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
-}
-
-.top-buttons {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 20px;
-    position: absolute;
-    width: 100%;
-    top: 0;
-}
-
-.top-buttons .btn-outline-primary,
-.top-buttons .btn-outline-secondary {
-    color: white;
-    border-color: white;
-}
-
-.top-buttons .btn-outline-primary:hover,
-.top-buttons .btn-outline-secondary:hover {
-    background: white;
-    color: #0a3d62;
 }
 
 .container {
