@@ -1,15 +1,18 @@
-function loadScoreboard(filterCategory = "all") {
+let refreshInterval;
+let currentCategory = "all";
+
+function loadScoreboard(filterCategory = currentCategory) {
     fetch("fetch_scores.php")
         .then(response => response.json())
         .then(data => {
             let container = document.getElementById("scoreboard-container");
-            container.innerHTML = ""; 
+            container.innerHTML = "";
 
             let categoryFilter = document.getElementById("categoryFilter");
             categoryFilter.innerHTML = `
-                <option value="all" selected>Choose a Category</option>
-                <option value="categories">All Category Scoreboards</option>
-                <option value="overall">Overall Scoreboard</option>
+                <option value="all" ${filterCategory === "all" ? "selected" : ""}>Choose a Category</option>
+                <option value="categories" ${filterCategory === "categories" ? "selected" : ""}>All Category Scoreboards</option>
+                <option value="overall" ${filterCategory === "overall" ? "selected" : ""}>Overall Scoreboard</option>
             `;
 
             let allCategories = new Set();
@@ -76,13 +79,13 @@ function loadScoreboard(filterCategory = "all") {
                     categories[category].forEach((row, index) => {
                         let total = (parseInt(row.gold || 0) * 5) + (parseInt(row.silver || 0) * 3) + (parseInt(row.bronze || 0) * 1);
                         categoryContent += `
-                            <tr>
+                            <tr data-id="${row.id}">
                                 <td>${total > 0 ? index + 1 : "-"}</td>
                                 <td>${row.participant || "Unknown"}</td>
-                                <td>${row.gold}</td>
-                                <td>${row.silver}</td>
-                                <td>${row.bronze}</td>
-                                <td>${total}</td>
+                                <td>${row.gold || 0}</td>
+                                <td>${row.silver || 0}</td>
+                                <td>${row.bronze || 0}</td>
+                                <td class="total">${total}</td>
                             </tr>
                         `;
                     });
@@ -99,15 +102,18 @@ function loadScoreboard(filterCategory = "all") {
                 overallContent = displayOverallScores(overallScores);
                 container.innerHTML = eventTitle + overallContent + categoryContent;
                 hasDisplayedContent = true;
-            } else if (filterCategory === "categories") {
+            }
+            else if (filterCategory === "categories") {
                 overallContent = displayOverallScores(overallScores);
                 container.innerHTML = eventTitle + overallContent + categoryContent;
                 hasDisplayedContent = true;
-            } else if (filterCategory === "overall") {
+            }
+            else if (filterCategory === "overall") {
                 overallContent = displayOverallScores(overallScores);
                 container.innerHTML = eventTitle + overallContent;
                 hasDisplayedContent = true;
-            } else {
+            }
+            else {
                 container.innerHTML = eventTitle + categoryContent;
             }
 
@@ -154,10 +160,20 @@ function displayOverallScores(overallScores) {
     return overallContent;
 }
 
+function startAutoRefresh(interval) {
+    clearInterval(refreshInterval);
+    refreshInterval = setInterval(() => {
+        loadScoreboard();
+    }, interval);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-    loadScoreboard(); 
+    loadScoreboard();
+    startAutoRefresh(500);
 });
 
 document.getElementById("categoryFilter").addEventListener("change", function () {
-    loadScoreboard(this.value);
+    currentCategory = this.value;
+    loadScoreboard(currentCategory);
+    // current
 });
