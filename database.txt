@@ -16,7 +16,8 @@ CREATE TABLE scores (
     event_category VARCHAR(255) NOT NULL,
     gold INT NULL,
     silver INT NULL,
-    bronze INT NULL
+    bronze INT NULL,
+    timestamp timestamp
 );
 
 INSERT INTO admins (username, password)  
