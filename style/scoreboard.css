@@ -27,10 +27,25 @@ body {
 table {
     margin-top: 20px;
     width: 100%;
+    min-width: 600px;
     background: #1e3799;
     border-radius: 5px;
     overflow: hidden;
 }
+
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.table th,
+.table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+}
+
 
 .event-title {
     background-color: #f8f9fa;
@@ -112,4 +127,12 @@ footer {
     text-align: center;
     padding: 10px 0;
     background: transparent;
+}
+
+@media screen and (max-width: 768px) {
+    .table th,
+    .table td {
+        font-size: 14px;
+        padding: 6px;
+    }
 }

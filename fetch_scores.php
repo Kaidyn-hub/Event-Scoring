@@ -3,7 +3,10 @@ require 'db_connect.php';
 
 header('Content-Type: application/json');
 
-$query = "SELECT id, event_name, event_category, participants, gold, silver, bronze, year FROM scores ORDER BY event_name, event_category, gold DESC, silver DESC, bronze DESC";
+$query = "SELECT id, event_name, event_category, participants, gold, silver, bronze, year, timestamp 
+          FROM scores 
+          ORDER BY event_name, event_category, gold DESC, silver DESC, bronze DESC, timestamp ASC";
+
 $result = $conn->query($query);
 
 $scores = [];
@@ -29,7 +32,8 @@ while ($row = $result->fetch_assoc()) {
         "category" => $row["event_category"],
         "gold" => $row["gold"],
         "silver" => $row["silver"],
-        "bronze" => $row["bronze"]
+        "bronze" => $row["bronze"],
+        "timestamp" => $row["timestamp"]
     ];
 }
 

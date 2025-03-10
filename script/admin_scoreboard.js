@@ -56,9 +56,29 @@ function loadScoreboard(filterCategory = "all") {
                 for (const category in categories) {
                     if (filterCategory !== "all" && filterCategory !== "overall" && filterCategory !== "categories" && category !== filterCategory) continue;
                     hasDisplayedContent = true;
+                
+                    categories[category].sort((a, b) => {
+                        let totalA = (parseInt(a.gold || 0) * 5) + (parseInt(a.silver || 0) * 3) + (parseInt(a.bronze || 0) * 1);
+                        let totalB = (parseInt(b.gold || 0) * 5) + (parseInt(b.silver || 0) * 3) + (parseInt(b.bronze || 0) * 1);
+                
+                        if (totalB !== totalA) return totalB - totalA; 
+                        if (b.gold !== a.gold) return b.gold - a.gold; 
+                        if (b.silver !== a.silver) return b.silver - a.silver; 
+                        if (b.bronze !== a.bronze) return b.bronze - a.bronze;
+                
+                        return new Date(a.timestamp) - new Date(b.timestamp);
+                    });
+                
 
-                    categoryContent += `<h4 class="category-title">${category}</h4>`;
                     categoryContent += `
+                        <h4 class="category-title">
+                            ${category}
+                            <span class="delete-category-btn" onclick="deleteCategory('${category}')" title="Delete Category">&times;</span>
+                        </h4>
+                    `;
+
+                    categoryContent += `
+                    <div class="table-responsive">
                         <table class="table table-bordered text-center">
                             <thead>
                                 <tr>
@@ -87,7 +107,7 @@ function loadScoreboard(filterCategory = "all") {
                         `;
                     });
 
-                    categoryContent += `</tbody></table>`;
+                    categoryContent += `</tbody></table></div>`;
                 }
             }
 
@@ -121,9 +141,11 @@ function loadScoreboard(filterCategory = "all") {
         .catch(error => console.error('Error loading scoreboard:', error));
 }
 
+
 function displayOverallScores(overallScores) {
     let overallContent = `<h4 class="category-title">Overall Scoreboard</h4>`;
     overallContent += `
+    <div class="table-responsive">
         <table class="table table-bordered text-center">
             <thead>
                 <tr>
@@ -138,7 +160,14 @@ function displayOverallScores(overallScores) {
             <tbody>
     `;
 
-    let sortedScores = Object.entries(overallScores).sort((a, b) => b[1].total - a[1].total);
+    let sortedScores = Object.entries(overallScores).sort((a, b) => {
+        if (b[1].total !== a[1].total) return b[1].total - a[1].total;
+        if (b[1].gold !== a[1].gold) return b[1].gold - a[1].gold; 
+        if (b[1].silver !== a[1].silver) return b[1].silver - a[1].silver; 
+        if (b[1].bronze !== a[1].bronze) return b[1].bronze - a[1].bronze; 
+
+        return new Date(a[1].timestamp) - new Date(b[1].timestamp);
+    });
 
     sortedScores.forEach(([participant, stats], index) => {
         overallContent += `
@@ -153,7 +182,7 @@ function displayOverallScores(overallScores) {
         `;
     });
 
-    overallContent += `</tbody></table>`;
+    overallContent += `</tbody></table></div>`;
     return overallContent;
 }
 
@@ -164,6 +193,24 @@ document.addEventListener("DOMContentLoaded", function () {
 document.getElementById("categoryFilter").addEventListener("change", function () {
     loadScoreboard(this.value);
 });
+
+function deleteCategory(category) {
+    if (!category) return;
+
+    if (confirm(`Are you sure you want to delete the category "${category}"? This action cannot be undone.`)) {
+        fetch("delete_category.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `category=${encodeURIComponent(category)}`
+        })
+        .then(response => response.text())
+        .then(result => {
+            alert(result);
+            loadScoreboard();
+        })
+        .catch(error => console.error("Error deleting category:", error));
+    }
+}
 
 
 function updateAllScores() {
@@ -190,7 +237,10 @@ function resetScoreboard() {
 }
 
 function confirmLogout(event) {
-    if (!confirm("Are you sure you want to log out?")) {
-        event.preventDefault();
+    event.preventDefault();
+
+    const userConfirmed = confirm("Are you sure you want to logout?");
+    if (userConfirmed) {
+        window.location.href = "logout.php";
     }
 }

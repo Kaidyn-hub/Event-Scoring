@@ -12,9 +12,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    $sql = "UPDATE scores SET gold = ?, silver = ?, bronze = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iiii", $gold, $silver, $bronze, $id);
+    $query = "UPDATE scores SET gold = ?, silver = ?, bronze = ?, timestamp = CURRENT_TIMESTAMP WHERE id = ? 
+          AND (gold != ? OR silver != ? OR bronze != ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("iiiiiii", $gold, $silver, $bronze, $id, $gold, $silver, $bronze);
+
 
     if ($stmt->execute()) {
         echo json_encode(["status" => "success"]);
