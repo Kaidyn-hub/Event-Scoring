@@ -1,0 +1,48 @@
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0a3d62, #000000);
+    color: white;
+}
+
+.card {
+    width: 450px;
+    padding: 40px;
+    border-radius: 13px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    background: #0c2461;
+    color: white;
+}
+
+label{
+    font-size: 18px;
+}
+
+.form-control {
+    background: #1e3799;
+    color: white;
+    border: 1px solid #4a69bd;
+}
+
+.form-control::placeholder {
+    color: #a4b0be;
+}
+
+.btn-primary {
+    background: #3c6382;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #0a3d62;
+}
+
+footer{
+    color: white;
+    position: absolute;
+    bottom: 10px;
+}
