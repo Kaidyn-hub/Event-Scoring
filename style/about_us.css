@@ -17,6 +17,10 @@ body {
     margin: auto;
 }
 
+.container.mt-5{
+    background-color: white;
+}
+
 h1, h2 {
     color: #1e3799;
 }
@@ -32,6 +36,7 @@ h2 {
 
 p {
     line-height: 1.6;
+    font-size: 20px;
 }
 
 ul {
