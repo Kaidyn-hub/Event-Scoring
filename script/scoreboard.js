@@ -61,13 +61,14 @@ function loadScoreboard(filterCategory = currentCategory) {
                     hasDisplayedContent = true;
                 
                     categories[category].sort((a, b) => {
+                        if (b.gold !== a.gold) return b.gold - a.gold; 
+                        if (b.silver !== a.silver) return b.silver - a.silver; 
+                        if (b.bronze !== a.bronze) return b.bronze - a.bronze; 
+                
                         let totalA = (parseInt(a.gold || 0) * 5) + (parseInt(a.silver || 0) * 3) + (parseInt(a.bronze || 0) * 1);
                         let totalB = (parseInt(b.gold || 0) * 5) + (parseInt(b.silver || 0) * 3) + (parseInt(b.bronze || 0) * 1);
                 
-                        if (totalB !== totalA) return totalB - totalA; 
-                        if (b.gold !== a.gold) return b.gold - a.gold; 
-                        if (b.silver !== a.silver) return b.silver - a.silver; 
-                        if (b.bronze !== a.bronze) return b.bronze - a.bronze;
+                        if (totalB !== totalA) return totalB - totalA;
                 
                         return new Date(a.timestamp) - new Date(b.timestamp);
                     });
@@ -156,11 +157,11 @@ function displayOverallScores(overallScores) {
     `;
 
     let sortedScores = Object.entries(overallScores).sort((a, b) => {
-        if (b[1].total !== a[1].total) return b[1].total - a[1].total;
-        if (b[1].gold !== a[1].gold) return b[1].gold - a[1].gold; 
+        if (b[1].gold !== a[1].gold) return b[1].gold - a[1].gold;
         if (b[1].silver !== a[1].silver) return b[1].silver - a[1].silver; 
         if (b[1].bronze !== a[1].bronze) return b[1].bronze - a[1].bronze; 
-
+        if (b[1].total !== a[1].total) return b[1].total - a[1].total;
+    
         return new Date(a[1].timestamp) - new Date(b[1].timestamp);
     });
 
