@@ -191,7 +191,7 @@ function startAutoRefresh(interval) {
 
 document.addEventListener("DOMContentLoaded", function () {
     loadScoreboard();
-    startAutoRefresh(10000);
+    startAutoRefresh(5000);
 });
 
 document.getElementById("categoryFilter").addEventListener("change", function () {
