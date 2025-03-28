@@ -19,7 +19,7 @@ function removeParticipant(button) {
 }
 
 // Event listener for the event form submission
-document.getElementById("eventForm").addEventListener("submit", function(event) {
+document.getElementById("eventForm").addEventListener("submit", function (event) {
     // Prevent the default form submission
     event.preventDefault();
     let formData = new FormData(this); // Create a FormData object from the form
@@ -29,21 +29,21 @@ document.getElementById("eventForm").addEventListener("submit", function(event) 
         method: "POST",
         body: formData
     }).then(response => response.json())
-      .then(data => {
-          // Check if the data was saved successfully
-          if (data.status === "success") {
-            alert("Data saved successfully!");
-            this.reset(); // Reset the form
-            document.getElementById("participants-container").innerHTML = ""; // Clear the participants container
-          } else {
-              // Alert the user if there was an error saving data
-              alert("Error saving data: " + data.message);
-          }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          alert("An error occurred while saving data."); // Alert on error
-      });
+        .then(data => {
+            // Check if the data was saved successfully
+            if (data.status === "success") {
+                alert("Data saved successfully!");
+                this.reset(); // Reset the form
+                document.getElementById("participants-container").innerHTML = ""; // Clear the participants container
+            } else {
+                // Alert the user if there was an error saving data
+                alert("Error saving data: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred while saving data."); // Alert on error
+        });
 });
 
 // Function to confirm logout

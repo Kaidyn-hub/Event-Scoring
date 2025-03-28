@@ -1,5 +1,5 @@
 // Event listener for the login form submission
-document.getElementById("loginForm").addEventListener("submit", function(event) {
+document.getElementById("loginForm").addEventListener("submit", function (event) {
     // Prevent the default form submission
     event.preventDefault();
     // Get the username and password from the input fields
@@ -12,15 +12,15 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `username=${username}&password=${password}`
     })
-    .then(response => response.json())
-    .then(data => {
-        // Check if the login was successful
-        if (data.status === "success") {
-            // Redirect to the landing page upon successful login
-            window.location.href = "landingpage.html";
-        } else {
-            // Display an error message if login fails
-            document.getElementById("errorMsg").style.display = "block";
-        }
-    });
+        .then(response => response.json())
+        .then(data => {
+            // Check if the login was successful
+            if (data.status === "success") {
+                // Redirect to the landing page upon successful login
+                window.location.href = "landingpage.html";
+            } else {
+                // Display an error message if login fails
+                document.getElementById("errorMsg").style.display = "block";
+            }
+        });
 });//current
