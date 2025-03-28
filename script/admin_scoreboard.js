@@ -1,24 +1,28 @@
+// Function to load the scoreboard with optional category filter
 function loadScoreboard(filterCategory = "all") {
+    // Fetch scores from the server
     fetch("fetch_scores.php")
         .then(response => response.json())
         .then(data => {
             let container = document.getElementById("scoreboard-container");
-            container.innerHTML = ""; 
+            container.innerHTML = ""; // Clear the scoreboard container
 
             let categoryFilter = document.getElementById("categoryFilter");
+            // Populate the category filter options
             categoryFilter.innerHTML = `
                 <option value="all" selected>Choose a Category</option>
                 <option value="categories">All Category Scoreboards</option>
                 <option value="overall">Overall Scoreboard</option>
             `;
 
-            let allCategories = new Set();
-            let overallScores = {};
-            let eventTitle = "";
-            let overallContent = "";
-            let categoryContent = "";
-            let hasDisplayedContent = false;
+            let allCategories = new Set(); // Set to hold unique categories
+            let overallScores = {}; // Object to hold overall scores
+            let eventTitle = ""; // Variable to hold event title
+            let overallContent = ""; // Variable to hold overall content
+            let categoryContent = ""; // Variable to hold category content
+            let hasDisplayedContent = false; // Flag to check if content is displayed
 
+            // Loop through the fetched data to build the scoreboard
             for (const event in data) {
                 let eventInfo = data[event].event_info;
                 let participants = data[event].participants || [];
@@ -31,32 +35,38 @@ function loadScoreboard(filterCategory = "all") {
                     eventTitle = `<h3 class="event-title">${eventName} - ${eventYear}</h3>`;
                 }
 
-                let categories = {};
+                let categories = {}; // Object to hold participants by category
 
+                // Loop through participants to categorize and calculate scores
                 participants.forEach(row => {
                     let categoryName = row.category || "Uncategorized";
-                    allCategories.add(categoryName);
+                    allCategories.add(categoryName); // Add category to the set
 
                     if (!categories[categoryName]) {
                         categories[categoryName] = [];
                     }
-                    categories[categoryName].push(row);
+                    categories[categoryName].push(row); // Add participant to the category
 
+                    // Calculate total score based on medals
                     let total = (parseInt(row.gold || 0) * 5) + (parseInt(row.silver || 0) * 3) + (parseInt(row.bronze || 0) * 1);
 
+                    // Initialize overall scores for the participant
                     if (!overallScores[row.participant]) {
                         overallScores[row.participant] = { total: 0, gold: 0, silver: 0, bronze: 0 };
                     }
-                    overallScores[row.participant].total += total;
-                    overallScores[row.participant].gold += parseInt(row.gold || 0);
-                    overallScores[row.participant].silver += parseInt(row.silver || 0);
-                    overallScores[row.participant].bronze += parseInt(row.bronze || 0);
+                    overallScores[row.participant].total += total; // Update total score
+                    overallScores[row.participant].gold += parseInt(row.gold || 0); // Update gold count
+                    overallScores[row.participant].silver += parseInt(row.silver || 0); // Update silver count
+                    overallScores[row.participant].bronze += parseInt(row.bronze || 0); // Update bronze count
                 });
 
+                // Loop through categories to build category content
                 for (const category in categories) {
+                    // Check if the category matches the filter
                     if (filterCategory !== "all" && filterCategory !== "overall" && filterCategory !== "categories" && category !== filterCategory) continue;
-                    hasDisplayedContent = true;
-                
+                    hasDisplayedContent = true; // Set flag to true
+
+                    // Sort participants by medals
                     categories[category].sort((a, b) => {
                         if (b.gold !== a.gold) return b.gold - a.gold; 
                         if (b.silver !== a.silver) return b.silver - a.silver; 
@@ -65,12 +75,12 @@ function loadScoreboard(filterCategory = "all") {
                         let totalA = (parseInt(a.gold || 0) * 5) + (parseInt(a.silver || 0) * 3) + (parseInt(a.bronze || 0) * 1);
                         let totalB = (parseInt(b.gold || 0) * 5) + (parseInt(b.silver || 0) * 3) + (parseInt(b.bronze || 0) * 1);
                 
-                        if (totalB !== totalA) return totalB - totalA;
+                        if (totalB !== totalA) return totalB - totalA; // Sort by total score
                 
-                        return new Date(a.timestamp) - new Date(b.timestamp);
+                        return new Date(a.timestamp) - new Date(b.timestamp); // Sort by timestamp
                     });
-                
 
+                    // Build category content
                     categoryContent += `
                         <h4 class="category-title">
                             ${category}
@@ -94,6 +104,7 @@ function loadScoreboard(filterCategory = "all") {
                             <tbody>
                     `;
 
+                    // Loop through participants in the category to build table rows
                     categories[category].forEach((row, index) => {
                         let total = (parseInt(row.gold || 0) * 5) + (parseInt(row.silver || 0) * 3) + (parseInt(row.bronze || 0) * 1);
                         categoryContent += `
@@ -108,14 +119,16 @@ function loadScoreboard(filterCategory = "all") {
                         `;
                     });
 
-                    categoryContent += `</tbody></table></div>`;
+                    categoryContent += `</tbody></table></div>`; // Close the table
                 }
             }
 
+            // Populate the category filter with unique categories
             allCategories.forEach(category => {
                 categoryFilter.innerHTML += `<option value="${category}">${category}</option>`;
             });
 
+            // Display the content based on the selected filter
             if (filterCategory === "all") {
                 overallContent = displayOverallScores(overallScores);
                 container.innerHTML = eventTitle + overallContent + categoryContent;
@@ -135,14 +148,15 @@ function loadScoreboard(filterCategory = "all") {
                 container.innerHTML = eventTitle + categoryContent;
             }
 
+            // Display a message if no content was found
             if (!hasDisplayedContent) {
                 container.innerHTML = `<p class="text-muted">No results found for this category.</p>`;
             }
         })
-        .catch(error => console.error('Error loading scoreboard:', error));
+        .catch(error => console.error('Error loading scoreboard:', error)); // Log any errors
 }
 
-
+// Function to display overall scores
 function displayOverallScores(overallScores) {
     let overallContent = `<h4 class="category-title">Overall Scoreboard</h4>`;
     overallContent += `
@@ -161,6 +175,7 @@ function displayOverallScores(overallScores) {
             <tbody>
     `;
 
+    // Sort overall scores for display
     let sortedScores = Object.entries(overallScores).sort((a, b) => {
         if (b[1].gold !== a[1].gold) return b[1].gold - a[1].gold;
         if (b[1].silver !== a[1].silver) return b[1].silver - a[1].silver; 
@@ -170,6 +185,7 @@ function displayOverallScores(overallScores) {
         return new Date(a[1].timestamp) - new Date(b[1].timestamp);
     });
 
+    // Loop through sorted scores to build the overall scoreboard
     sortedScores.forEach(([participant, stats], index) => {
         overallContent += `
             <tr>
@@ -183,65 +199,16 @@ function displayOverallScores(overallScores) {
         `;
     });
 
-    overallContent += `</tbody></table></div>`;
-    return overallContent;
+    overallContent += `</tbody></table></div>`; // Close the table
+    return overallContent; // Return the overall content
 }
 
+// Event listener for DOM content loaded
 document.addEventListener("DOMContentLoaded", function () {
-    loadScoreboard(); 
+    loadScoreboard(); // Load the scoreboard on page load
 });
 
+// Event listener for category filter change
 document.getElementById("categoryFilter").addEventListener("change", function () {
-    loadScoreboard(this.value);
+    loadScoreboard(this.value); // Load scoreboard based on selected category
 });
-
-function deleteCategory(category) {
-    if (!category) return;
-
-    if (confirm(`Are you sure you want to delete the category "${category}"? This action cannot be undone.`)) {
-        fetch("delete_category.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `category=${encodeURIComponent(category)}`
-        })
-        .then(response => response.text())
-        .then(result => {
-            alert(result);
-            loadScoreboard();
-        })
-        .catch(error => console.error("Error deleting category:", error));
-    }
-}
-
-
-function updateAllScores() {
-    document.querySelectorAll("tr[data-id]").forEach(row => {
-        let id = row.dataset.id;
-        let gold = row.querySelector(".gold").value;
-        let silver = row.querySelector(".silver").value;
-        let bronze = row.querySelector(".bronze").value;
-
-        fetch("update_score.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `id=${id}&gold=${gold}&silver=${silver}&bronze=${bronze}`
-        })
-        .then(() => loadScoreboard());
-    });
-}
-
-function resetScoreboard() {
-    if (confirm("Are you sure you want to reset all scores?")) {
-        fetch("reset_scoreboard.php", { method: "POST" })
-            .then(() => loadScoreboard());
-    }
-}
-
-function confirmLogout(event) {
-    event.preventDefault();
-
-    const userConfirmed = confirm("Are you sure you want to logout?");
-    if (userConfirmed) {
-        window.location.href = "logout.php";
-    }
-}
